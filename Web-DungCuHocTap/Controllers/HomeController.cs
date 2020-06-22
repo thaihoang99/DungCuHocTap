@@ -30,7 +30,7 @@ namespace Web_DungCuHocTap.Controllers
 
         public ActionResult NavbarPartial()
         {
-            var list = new WebDungCuHocTapDbContext().Loais.ToList();
+            var list = new WebDungCuHocTapDbContext().TheLoais.ToList();
             return PartialView("_NavPartial", list);
         }
     }

@@ -13,7 +13,7 @@ namespace Web_DungCuHocTap.Areas.Admin.Controllers
         // GET: Admin/Category
         public ActionResult ShowCategory()
         {
-            var list = db.Loais.ToList();
+            var list = db.TheLoais.ToList();
             return View(list);
         }
 
@@ -22,12 +22,12 @@ namespace Web_DungCuHocTap.Areas.Admin.Controllers
         {
             try
             {
-                var item = db.Loais.Find(id);
+                var item = db.TheLoais.Find(id);
                 if (item == null)
                 {
                     return Json(0, JsonRequestBehavior.AllowGet);
                 }
-                db.Loais.Remove(item);
+                db.TheLoais.Remove(item);
                 db.SaveChanges();
                 return Json(1, JsonRequestBehavior.AllowGet);
             }
@@ -39,21 +39,21 @@ namespace Web_DungCuHocTap.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddCategory(Loai model)
+        public JsonResult AddCategory(TheLoai model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var loai = new Loai
+                    var loai = new TheLoai
                     {
-                        TenLoai = model.TenLoai,
-                        MetaKeyword = SlugGenerator.SlugGenerator.GenerateSlug(model.TenLoai),
+                        TenTL = model.TenTL,
+                        MetaKeyword = SlugGenerator.SlugGenerator.GenerateSlug(model.TenTL),
                         NgayTao = DateTime.Now
                     };
-                    db.Loais.Add(loai);
+                    db.TheLoais.Add(loai);
                     db.SaveChanges();
-                    return Json(loai.MaLoai, JsonRequestBehavior.AllowGet);
+                    return Json(loai.MaTL, JsonRequestBehavior.AllowGet);
                 }
                 return Json(0, JsonRequestBehavior.AllowGet);
             }

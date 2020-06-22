@@ -6,8 +6,8 @@ namespace Web_DungCuHocTap.Models.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("ChiTietSP")]
-    public partial class ChiTietSP
+    [Table("CTSP")]
+    public partial class CTSP
     {
         [Key]
         public int MaCTSP { get; set; }
@@ -16,7 +16,7 @@ namespace Web_DungCuHocTap.Models.Models
 
         public int? MaMau { get; set; }
 
-        public virtual Color Color { get; set; }
+        public virtual Mau Mau { get; set; }
 
         public virtual SanPham SanPham { get; set; }
     }

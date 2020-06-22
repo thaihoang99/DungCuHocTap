@@ -78,16 +78,16 @@ namespace Web_DungCuHocTap.Controllers
         }
 
         [Authorize]
-        public JsonResult CheckOut(DatHang model)
+        public JsonResult CheckOut(HoaDon model)
         {
             if (ModelState.IsValid)
             {
-                model.NgayDatHang = DateTime.Now;
+                model.NgayTao = DateTime.Now;
                 //model.TongTien = 
                 model.MaTT = 1;
 
                 var db = new WebDungCuHocTapDbContext();
-                db.DatHangs.Add(model);
+                db.HoaDons.Add(model);
                 db.SaveChanges();
 
                 return Json(new { Success = 1 }, JsonRequestBehavior.AllowGet);

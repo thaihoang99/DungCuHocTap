@@ -28,7 +28,7 @@ namespace ThucTapNhom_WebDungCuHocTap.Controllers
             }
             if (maphanloai != null)
             {
-                list = list.Where(x => x.MaLoai == maphanloai).ToList();
+                list = list.Where(x => x.MaTL == maphanloai).ToList();
             }
 
             list = list.Skip(index * step).Take(step).ToList();

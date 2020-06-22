@@ -12,7 +12,7 @@ namespace Web_DungCuHocTap.Models.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public KhachHang()
         {
-            DatHangs = new HashSet<DatHang>();
+            HoaDons = new HashSet<HoaDon>();
         }
 
         [Key]
@@ -32,16 +32,16 @@ namespace Web_DungCuHocTap.Models.Models
         [Required]
         [StringLength(255)]
         public string TenKH { get; set; }
-        
+
         [StringLength(20)]
         public string SDTKH { get; set; }
 
         [StringLength(255)]
         public string DiaChiKH { get; set; }
 
-        public DateTime? NgayDangKy { get; set; }
+        public DateTime? NgayTao { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DatHang> DatHangs { get; set; }
+        public virtual ICollection<HoaDon> HoaDons { get; set; }
     }
 }

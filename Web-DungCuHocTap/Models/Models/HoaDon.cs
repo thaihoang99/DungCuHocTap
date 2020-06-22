@@ -6,37 +6,39 @@ namespace Web_DungCuHocTap.Models.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("DatHang")]
-    public partial class DatHang
+    [Table("HoaDon")]
+    public partial class HoaDon
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public DatHang()
+        public HoaDon()
         {
-            ChiTietDHs = new HashSet<ChiTietDH>();
+            CTHDs = new HashSet<CTHD>();
         }
 
         [Key]
-        public int MaDH { get; set; }
+        public int MaHD { get; set; }
 
-        public DateTime? NgayDatHang { get; set; }
+        public DateTime? NgayTao { get; set; }
 
-        public DateTime? NgayGiaoHang { get; set; }
+        [StringLength(255)]
+        public string TenKH { get; set; }
+
+        [StringLength(15)]
+        public string SDT { get; set; }
+
+        public string DiaChi { get; set; }
 
         public decimal? TongTien { get; set; }
 
         public int? MaKH { get; set; }
 
-        public int? MaGG { get; set; }
-
         public int? MaTT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChiTietDH> ChiTietDHs { get; set; }
-
-        public virtual GiamGia GiamGia { get; set; }
+        public virtual ICollection<CTHD> CTHDs { get; set; }
 
         public virtual KhachHang KhachHang { get; set; }
 
-        public virtual TrangThaiDH TrangThaiDH { get; set; }
+        public virtual TrangThai TrangThai { get; set; }
     }
 }

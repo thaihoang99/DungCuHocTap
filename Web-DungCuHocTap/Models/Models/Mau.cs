@@ -6,28 +6,27 @@ namespace Web_DungCuHocTap.Models.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("Loai")]
-    public partial class Loai
+    [Table("Mau")]
+    public partial class Mau
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Loai()
+        public Mau()
         {
-            SanPhams = new HashSet<SanPham>();
+            CTHDs = new HashSet<CTHD>();
+            CTSPs = new HashSet<CTSP>();
         }
 
         [Key]
-        public int MaLoai { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int MaMau { get; set; }
 
-        [Required]
         [StringLength(255)]
-        public string TenLoai { get; set; }
-
-        [StringLength(50)]
-        public string MetaKeyword { get; set; }
-
-        public DateTime? NgayTao { get; set; }
+        public string TenMau { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SanPham> SanPhams { get; set; }
+        public virtual ICollection<CTHD> CTHDs { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CTSP> CTSPs { get; set; }
     }
 }

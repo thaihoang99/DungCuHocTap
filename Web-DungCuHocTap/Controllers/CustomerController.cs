@@ -25,7 +25,7 @@ namespace Web_DungCuHocTap.Controllers
             if (ModelState.IsValid)
             {
                 model.UserPassword = MD5Hash(model.UserPassword);
-                model.NgayDangKy = DateTime.Now;
+                model.NgayTao = DateTime.Now;
 
                 var db = new WebDungCuHocTapDbContext();
                 db.KhachHangs.Add(model);

@@ -6,27 +6,24 @@ namespace Web_DungCuHocTap.Models.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("Color")]
-    public partial class Color
+    [Table("TrangThai")]
+    public partial class TrangThai
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Color()
+        public TrangThai()
         {
-            ChiTietDHs = new HashSet<ChiTietDH>();
-            ChiTietSPs = new HashSet<ChiTietSP>();
+            HoaDons = new HashSet<HoaDon>();
         }
 
         [Key]
-        public int MaMau { get; set; }
+        public int MaTT { get; set; }
 
-        [Required]
         [StringLength(255)]
-        public string TenMau { get; set; }
+        public string TenTT { get; set; }
+
+        public DateTime? NgayTao { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChiTietDH> ChiTietDHs { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChiTietSP> ChiTietSPs { get; set; }
+        public virtual ICollection<HoaDon> HoaDons { get; set; }
     }
 }

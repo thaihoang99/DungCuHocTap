@@ -6,25 +6,28 @@ namespace Web_DungCuHocTap.Models.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("GiamGia")]
-    public partial class GiamGia
+    [Table("TheLoai")]
+    public partial class TheLoai
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public GiamGia()
+        public TheLoai()
         {
-            DatHangs = new HashSet<DatHang>();
+            SanPhams = new HashSet<SanPham>();
         }
 
         [Key]
-        public int MaGG { get; set; }
+        public int MaTL { get; set; }
 
-        public int? GiaTriGiam { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string TenTL { get; set; }
 
-        public DateTime? NgayBatDau { get; set; }
+        [StringLength(50)]
+        public string MetaKeyword { get; set; }
 
-        public DateTime? NgayKetThuc { get; set; }
+        public DateTime? NgayTao { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DatHang> DatHangs { get; set; }
+        public virtual ICollection<SanPham> SanPhams { get; set; }
     }
 }
