@@ -10,10 +10,10 @@ USE DungCuHocTap
 GO
 
 /*Tao bang du lieu*/
-CREATE TABLE Loai
+CREATE TABLE TheLoai
 (
-	MaLoai INT PRIMARY KEY IDENTITY(1, 1),
-	TenLoai nvarchar(255) UNIQUE NOT NULL,
+	MaTL INT PRIMARY KEY IDENTITY(1, 1),
+	TenTL nvarchar(255) UNIQUE NOT NULL,
 	MetaKeyword nvarchar(50),
 	NgayTao datetime DEFAULT getdate()
 )
@@ -24,6 +24,7 @@ CREATE TABLE SanPham
 	MaSP INT PRIMARY KEY IDENTITY(1, 1),
 	TenSP nvarchar(255) NOT NULL,
 	GiaSP DECIMAL(18, 0) NOT NULL,
+	KhuyenMai DECIMAL(18, 0) DEFAULT 0,
 	MotaSP NVARCHAR(MAX),
     AnhSP_1 NVARCHAR(MAX) DEFAULT N'',
     AnhSP_2 NVARCHAR(MAX) DEFAULT N'',
@@ -31,31 +32,20 @@ CREATE TABLE SanPham
 	NgayTao DATETIME DEFAULT getdate(),
 	TrangThaiSP bit,
 
-	MaLoai INT REFERENCES Loai(MaLoai) NOT NULL
+	MaTL INT REFERENCES dbo.TheLoai(MaTL) ON DELETE CASCADE
 )
 GO
 
-CREATE TABLE GiamGia
-(
-	MaGG INT PRIMARY KEY IDENTITY(1, 1),
-	GiaTriGiam int DEFAULT 0,
-	NgayBatDau DATETIME DEFAULT getdate(),
-	NgayKetThuc DATETIME DEFAULT getdate(),
-)
-GO
-/*color table*/
-CREATE TABLE NhaCC
-(
-	MaNCC INT PRIMARY KEY IDENTITY(1, 1),
-	TenNCC nvarchar(255) UNIQUE NOT NULL,
-	DiaChiNCC nvarchar(255)
+CREATE TABLE Mau(
+	MaMau int PRIMARY KEY,
+	TenMau nvarchar(255)
 )
 GO
 
-CREATE TABLE ChiTietSP(
+CREATE TABLE CTSP(
 	MaCTSP int PRIMARY KEY IDENTITY(1,1),
 	MaSP int REFERENCES SanPham(MaSP) ON DELETE CASCADE,
-	MaNCC int REFERENCES NhaCC(MaNCC)
+	MaMau int REFERENCES Mau(MaMau) ON DELETE CASCADE
 )
 GO
 
@@ -68,42 +58,43 @@ CREATE TABLE KhachHang
     TenKH NVARCHAR(255) NOT NULL,
     SDTKH NVARCHAR(20),
     DiaChiKH NVARCHAR(255),
-    NgayDangKy DATETIME DEFAULT GETDATE()
+    NgayTao DATETIME DEFAULT GETDATE()
 )
 GO
 
-CREATE TABLE TrangThaiDH(
+CREATE TABLE TrangThai(
 	MaTT int PRIMARY KEY IDENTITY(1,1),
 	TenTT nvarchar(255),
 	NgayTao datetime DEFAULT getdate()
 )
 GO
 
-CREATE TABLE DatHang
+CREATE TABLE HoaDon
 (
-    MaDH INT PRIMARY KEY IDENTITY(1, 1),
-    NgayDatHang DATETIME DEFAULT GETDATE(),
-	NgayGiaoHang datetime,
-    TongTien DECIMAL(18, 0),
+    MaHD INT PRIMARY KEY IDENTITY(1, 1),
+    NgayTao DATETIME DEFAULT GETDATE(),
+    TenKH nvarchar(255),
+	SDT varchar(15),
+	DiaChi nvarchar(MAX),
+	TongTien decimal(18, 2),
 
-    MaKH INT REFERENCES KhachHang(MaKH),
-	MaGG INT REFERENCES GiamGia(MaGG),
-	MaTT int REFERENCES TrangThaiDH(MaTT)
+	MaKH int REFERENCES dbo.KhachHang(MaKH) ON DELETE CASCADE,
+	MaTT int REFERENCES dbo.TrangThai(MaTT) ON DELETE CASCADE
 )
 GO
 
-CREATE TABLE ChiTietDH
+CREATE TABLE CTHD
 (
-    MaCTDH int PRIMARY KEY IDENTITY(1,1),
+    MaCTHD int PRIMARY KEY IDENTITY(1,1),
 	SoLuong int,
 
-	MaDH int REFERENCES DatHang(MaDH),
-	MaSP int REFERENCES SanPham(MaSP),
-	MaNCC int REFERENCES NhaCC(MaNCC)
+	MaHD int REFERENCES HoaDon(MaHD) ON DELETE CASCADE,
+	MaSP int REFERENCES SanPham(MaSP) ON DELETE CASCADE,
+	MaMau int REFERENCES dbo.Mau(MaMau) ON DELETE CASCADE
 )
 GO
 
-CREATE TABLE Admin
+CREATE TABLE [Admin]
 (
     MaAdmin INT PRIMARY KEY IDENTITY(1, 1),
     AdminUserName NVARCHAR(255) UNIQUE NOT NULL,
@@ -115,7 +106,7 @@ CREATE TABLE Admin
 GO
 
 /*Nhap du lieu*/
-INSERT INTO dbo.Loai
+INSERT INTO dbo.TheLoai
 VALUES
     (N'Bút các loại', N'but-cac-loai', getdate()),
 	(N'Balo học sinh', N'balo-hoc-sinh', getdate()),
@@ -123,91 +114,84 @@ VALUES
 	(N'Dụng cụ khác', N'dung-cu-khac', getdate())
 GO
 
-INSERT INTO dbo.NhaCC
-VALUES
-	(N'Thiên long', N'Hà Nội'),
-	(N'Nhà sách Fahasa', N'Hà Nội'),
-	(N'Campus', N'Hà Nội')
-GO
-
-INSERT INTO dbo.TrangThaiDH
+INSERT INTO dbo.TrangThai
 VALUES
     (N'Đang xử lý', getdate()),
 	(N'Đang giao hàng', getdate()),
 	(N'Đã giao hàng', getdate()),
 	(N'Đã huỷ', getdate()),
-	(N'Hàng có lỗi',getdate())
+	(N'Hàng có lỗi', getdate())
 GO
 
-	/*---INSERT SẢN PHẨM---*/
+INSERT INTO dbo.Mau
+VALUES
+(1, N'Xanh'), (2, N'Đỏ'), (3, N'Vàng'), (4, N'Đen')
+GO
 
+--but
 INSERT INTO dbo.SanPham
 VALUES
 (
     N'Bút Semi gel Super-SG03', -- TenSP - nvarchar
     4000, -- GiaSP - DECIMAL
+    0, -- KhuyenMai - DECIMAL
     N'Bút Gel dành cho học sinh - sinh viên & văn phòng
 		Sản phẩm đột phá về công nghệ sản xuất mực - phát huy tối đa ưu điểm của bút gel và bút bi', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     4, -- Rating - INT
-    getdate(), -- NgayTao - DATETIME
+    '2020-06-22 22:57:26', -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
-    1 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+    1 -- MaTL - INT
+),
 (
-    N'Bút Semi gel Super-SG02', -- TenSP - nvarchar
+	N'Bút Semi gel Super-SG03', -- TenSP - nvarchar
     5500, -- GiaSP - DECIMAL
+    0, -- KhuyenMai - DECIMAL
     N'Bút Gel dành cho học sinh - sinh viên & văn phòng
 		Sản phẩm đột phá về công nghệ sản xuất mực - phát huy tối đa ưu điểm của bút gel và bút bi', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
-    N'', -- AnhSP_2 - NVARCHAR
-    4, -- Rating - INT
-    getdate(), -- NgayTao - DATETIME
-    1, -- TrangThaiSP - bit
-    1 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
-(
-    N'Bút Semi Gel SG 2600', -- TenSP - nvarchar
-    6000, -- GiaSP - DECIMAL
-    N'Bút Gel dành cho học sinh - sinh viên & văn phòng
-	Kiểu dáng hiện đại - phần tay cầm có đệm cao su giảm trơn trượt giúp cầm bút thoải mái
-	Sản phẩm đột phá về công nghệ sản xuất mực - phát huy tối đa ưu điểm của bút gel và bút bi', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
-    getdate(), -- NgayTao - DATETIME
+    '2020-06-22 22:57:26', -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
-    1 -- MaLoai - INT
+    1 -- MaTL - INT
+),
+(
+	N'Bút Semi Gel SG 2600', -- TenSP - nvarchar
+    6000, -- GiaSP - DECIMAL
+    0, -- KhuyenMai - DECIMAL
+    N'Bút Gel dành cho học sinh - sinh viên & văn phòng
+		Sản phẩm đột phá về công nghệ sản xuất mực - phát huy tối đa ưu điểm của bút gel và bút bi', -- MotaSP - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
+    N'', -- AnhSP_2 - NVARCHAR
+    5, -- Rating - INT
+    '2020-06-22 22:57:26', -- NgayTao - DATETIME
+    1, -- TrangThaiSP - bit
+    1 -- MaTL - INT
 )
-
+GO
+--cap sach
 INSERT INTO dbo.SanPham
 VALUES
 (
     N'Cặp học sinh Cozy', -- TenSP - nvarchar
     115000, -- GiaSP - DECIMAL
+	0,
     N'Cặp nhựa Hồng Hà Cozy dành cho học sinh', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     2 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
-    N'Cặp học sinh SQ06', -- TenSP - nvarchar
+	N'Cặp học sinh SQ06', -- TenSP - nvarchar
     58000, -- GiaSP - DECIMAL
+	0,
     N'Sản phẩm cặp nhựa dành cho học sinh', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     4, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
@@ -215,187 +199,117 @@ VALUES
     2 -- MaLoai - INT
 )
 
+
+INSERT INTO [Admin]
+VALUES
+    (N'hoang', N'123', N'Thái Việt Hoàng', getdate())
+GO
+--hop but
 INSERT INTO dbo.SanPham
 VALUES
 (
     N'Hộp bút MJ Star Travel Astronaut 22x8.5', -- TenSP - nvarchar
     80000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     3 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
-    N'Hộp bút MJ Gấu nâu 8x20', -- TenSP - nvarchar
+	N'Hộp bút MJ Gấu nâu 8x20', -- TenSP - nvarchar
     60000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     4, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     3 -- MaLoai - INT
 )
-
+GO
+--san pham khac
 INSERT INTO dbo.SanPham
 VALUES
 (
     N'Bộ thước kẻ Cute Cat Cherry Blossom 20cm', -- TenSP - nvarchar
     25000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     4 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
-    N'Bộ thước kẻ compa Thỏ Molang and Friends', -- TenSP - nvarchar
+	N'Bộ thước kẻ compa Thỏ Molang and Friends', -- TenSP - nvarchar
     70000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     4 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
-    N'Kẹp tài liệu A4 Sumikko Gurashi NB 22x31', -- TenSP - nvarchar
+	N'Kẹp tài liệu A4 Sumikko Gurashi NB 22x31', -- TenSP - nvarchar
     35000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     4 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
-    N'Túi đựng tài liệu MJ Bake Time Sweet 24x33', -- TenSP - nvarchar
+	N'Túi đựng tài liệu MJ Bake Time Sweet 24x33', -- TenSP - nvarchar
     30000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     4, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     4 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
-    N'Cục tẩy gôm Xương rồng Cactus đầu hoa - Xanh lá cây', -- TenSP - nvarchar
+	N'Cục tẩy gôm Xương rồng Cactus đầu hoa - Xanh lá cây', -- TenSP - nvarchar
     10000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     4 -- MaLoai - INT
-)
-
-INSERT INTO dbo.SanPham
-VALUES
+),
 (
     N'Cắt băng dính Pink heart', -- TenSP - nvarchar
     25000, -- GiaSP - DECIMAL
+	0,
     N'abc', -- MotaSP - NVARCHAR
-    N'', -- AnhSP_1 - NVARCHAR
+    N'https://cdn.nhanh.vn/cdn/store/7534/ps/20200116/20012133_XX_thumb_350x350.JPG', -- AnhSP_1 - NVARCHAR
     N'', -- AnhSP_2 - NVARCHAR
     5, -- Rating - INT
     getdate(), -- NgayTao - DATETIME
     1, -- TrangThaiSP - bit
     4 -- MaLoai - INT
 )
+GO
 
-INSERT INTO dbo.ChiTietSP
+INSERT INTO dbo.CTSP
 VALUES
-    (1, 1),
-	(1, 3),
-	(2, 2),
-	(3, 3),
-	(2, 1)
-
-INSERT INTO dbo.Admin
-VALUES
-    (N'hoang', N'123', N'Thái Việt Hoàng', getdate())
-
-	/*---Cac thu tuc---*/
-
-CREATE PROC SelectOrderID
-	@MaKH int,
-	@MaTT int
-AS
-BEGIN
-	IF @MaTT = 0
-	BEGIN
-		SELECT MaDH
-        FROM dbo.DatHang dh
-        WHERE dh.MaDH=@MaKH
-    END
-        ELSE
-        BEGIN
-        SELECT MaDH
-        FROM dbo.DatHang dh
-        WHERE dh.MaKH=@MaKH
-            AND dh.MaTT=@MaTT
-    END
-END
-GO
-
-CREATE PROC SelectOrder
-    @MaKH INT
-AS
-BEGIN
-    SELECT dh.MaDH, dh.TongTien, dh.MaTT, ttd.TenTT, 
-		   dh.NgayDatHang, dh.NgayGiaoHang
-    FROM dbo.DatHang dh JOIN dbo.TrangThaiDH ttd 
-	ON dh.MaTT = ttd.MaTT
-    WHERE dh.MaKH = @MaKH
-END
-GO
-
-CREATE PROC SelectOrderProduct
-    @MaDH INT
-AS
-BEGIN
-    SELECT sp.MaSP, sp.TenSP, l.TenLoai,
-	TenNCC, ctd.SoLuong
-    FROM dbo.ChiTietDH ctd
-        JOIN dbo.DatHang dh ON ctd.MaDH = dh.MaDH
-        JOIN dbo.TrangThaiDH ttd ON dh.MaTT = ttd.MaTT
-        JOIN dbo.NhaCC nc ON ctd.MaNCC = nc.MaNCC
-        JOIN dbo.SanPham sp ON ctd.MaSP = sp.MaSP
-        JOIN dbo.Loai l ON sp.MaLoai = l.MaLoai
-    WHERE dh.MaDH = @MaDH
-END
-GO
-
-/*chạy thử proc*/
-EXEC SelectOrderID @MaKH = 1, @MaTT = 1
-GO
-
-EXEC SelectOrder @MaKH = 1
-GO
-
-EXEC SelectOrderProduct @MaDH = 1
+(1, 1), (1,2), (1,3), (2,2), (2,3), (3,1), (3,3)
 GO
