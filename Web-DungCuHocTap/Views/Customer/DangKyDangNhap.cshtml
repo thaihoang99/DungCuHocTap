@@ -47,7 +47,7 @@
                                 <input type="tel" value="" name="reg-phone" id="reg-phone" class="form-control input-feild">
 
                             </div>
-                            <div class="submit-button">
+                            <div class="submit-button" id="alert-text-reg">
                                 <a href="javascript:void(0);" id="SubmitCreate" class="btn main-btn">
                                     <span>
                                         <i class="fa fa-user submit-icon"></i>
@@ -127,7 +127,14 @@
                         "SDTKH": $("#reg-phone").val()
                     },
                     function (data) {
-                        console.log(data);
+                        if (data == 1) {
+                            console.log(data);
+                            $("#alert-text-reg").show();
+                            $("#alert-text-reg").text("Tạo tài khoản không thành công");
+                        } else {
+                            $("#alert-text-reg").show();
+                            $("#alert-text-reg").text("Tạo tài khoản thành công");
+                        }
                     }
                 );
             });

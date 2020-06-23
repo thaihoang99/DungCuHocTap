@@ -29,7 +29,7 @@
                                 <div class="tab-pane active" id="thumbnail_1">
                                     <div class="single-product-image">
                                         <img src="@Model.AnhSP_1" alt="single-product-image" />
-                                        <a class="new-mark-box" href="#">new</a>
+                                        @*<a class="new-mark-box" href="#">new</a>*@
                                         <a class="fancybox" href="@Model.AnhSP_1" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                                 </div>
                             </div>
                             <div class="single-product-condition">
-                                <p>Thể loại: @Model.Loai.TenLoai</p>
+                                <p>Thể loại: @Model.TheLoai.TenTL</p>
                             </div>
                             <div class="single-product-price">
                                 <h2>@Model.GiaSP.ToString("#,##0") VNĐ</h2>
